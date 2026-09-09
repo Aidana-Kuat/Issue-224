@@ -14,7 +14,9 @@ EMPTY = ""
 
 # constants for the remote hint engine
 REMOTE_MODEL_DEFAULT = "Qwen/Qwen3.6-35B-A3B"
-REMOTE_API_KEY_DEFAULT = "not-needed"
+
+REMOTE_API_KEY_ENV_VAR_DEFAULT = "REMOTE_HINT_API_KEY"
+# TODO: write a function that returns the API key from the system environemnt variable
 
 # the openai Python library rejects an empty api_key, so
 # the default is a placeholder string for servers that do
@@ -83,7 +85,7 @@ class RemoteHintEngine:
     def __init__(
         self,
         base_url: str,
-        api_key: str = REMOTE_API_KEY_DEFAULT,
+        api_key_env_var: str = "REMOTE_HINT_API_KEY",
         model_id: str = REMOTE_MODEL_DEFAULT,
         system_prompt: str | None = None,
         validation_rules: dict[str, list[str]] | None = None,
@@ -103,7 +105,9 @@ class RemoteHintEngine:
 
         """
         self._base_url = base_url
-        self._api_key = api_key
+        self._api_key = REMOTE_API_KEY_DEFAULT
+        self._api_key_env_var = api_key_env_var
+        # TODO: we need to make it so that if env var is set, we use that instead of the default
         self._model_id = model_id
         self._system_prompt = system_prompt
         self._validation_rules = validation_rules
