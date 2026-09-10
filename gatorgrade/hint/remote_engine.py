@@ -1,5 +1,6 @@
 """Remote auto-hint engine using OpenAI-compatible APIs."""
-
+import os
+from posix import stat
 from typing import Any, Optional, cast
 
 from gatorgrade.hint.support import (
@@ -95,7 +96,7 @@ class RemoteHintEngine:
         Args:
             base_url: Base URL of an OpenAI-compatible API server.
                 The /v1 path suffix is appended by the provider.
-            api_key: API key for the server, if required.
+            api_key_env_var: Name of the environment variable that contains the API key.
             model_id: Name of the model exposed at the server.
             system_prompt: Optional custom system prompt.
                 If provided, this replaces the built-in default.
@@ -105,7 +106,7 @@ class RemoteHintEngine:
 
         """
         self._base_url = base_url
-        self._api_key = REMOTE_API_KEY_DEFAULT
+        self._api_key = None
         self._api_key_env_var = api_key_env_var
         # TODO: we need to make it so that if env var is set, we use that instead of the default
         self._model_id = model_id
@@ -135,6 +136,19 @@ class RemoteHintEngine:
         The remote model is served by the API server and does not
         need to be downloaded or loaded locally.
         """
+
+    @staticmethod
+    def _get_value_from_env(env_var_name: str) -> str | None:
+        """Get the API key from the environment variable.
+
+        Args:
+            env_var_name: Name of the environment variable to read.
+
+        Returns:
+            The API key string, or a placeholder if the variable is not set.
+
+        """
+        return os.environ.get(env_var_name, None)
 
     @staticmethod
     def _is_valid_hint(
