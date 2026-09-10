@@ -144,7 +144,7 @@ VERBOSE_FLAG = "--verbose"
 AUTO_HINT_FLAG = "--auto-hint"
 AUTO_HINT_MODEL_FLAG = "--auto-hint-model"
 AUTO_HINT_URL_FLAG = "--auto-hint-url"
-AUTO_HINT_API_KEY_FLAG = "--auto-hint-api-key"
+AUTO_HINT_API_KEY_VAR_NAME_FLAG = "--auto-hint-api-env"
 AUTO_HINT_TRACK_FLAG = "--auto-hint-track"
 FILTER_MODE_FLAG = "--filter-mode"
 FILTER_BY_FLAG = "--filter-by"
@@ -506,7 +506,7 @@ def gatorgrade(  # noqa: PLR0912, PLR0913, PLR0915
             "back to default local model on any remote URL errors."
         ),
     ),
-    auto_hint_api_key: Optional[str] = typer.Option(
+    auto_hint_api_key_var_name: Optional[str] = typer.Option(
         None,
         "--auto-hint-api-key",
         help=(
@@ -679,7 +679,7 @@ def gatorgrade(  # noqa: PLR0912, PLR0913, PLR0915
             auto_hint,
             auto_hint_model,
             auto_hint_url,
-            auto_hint_api_key,
+            auto_hint_api_key_var_name,
         )
         if auto_hint_errors:
             checks_status = False
@@ -753,8 +753,8 @@ def gatorgrade(  # noqa: PLR0912, PLR0913, PLR0915
                 AUTO_HINT_URL_FLAG: str(auto_hint_url)
                 if auto_hint_url
                 else None,
-                AUTO_HINT_API_KEY_FLAG: str(auto_hint_api_key)
-                if auto_hint_api_key
+                AUTO_HINT_API_KEY_VAR_NAME_FLAG: str(auto_hint_api_key_var_name)
+                if auto_hint_api_key_var_name
                 else None,
                 AUTO_HINT_TRACK_FLAG: auto_hint_track,
                 FILTER_QUERY_FLAG: filter_query,
@@ -928,7 +928,7 @@ def gatorgrade(  # noqa: PLR0912, PLR0913, PLR0915
                         resolved_filename,
                         auto_hint_model,
                         auto_hint_url,
-                        auto_hint_api_key,
+                        auto_hint_api_key_var_name,
                         system_prompt=system_prompt,
                         validation_rules=validation_rules,
                         auto_hint_model_default=AUTO_HINT_MODEL_DEFAULT,
