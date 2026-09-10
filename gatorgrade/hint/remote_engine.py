@@ -106,9 +106,8 @@ class RemoteHintEngine:
 
         """
         self._base_url = base_url
-        self._api_key = None
+        self._api_key = self._get_value_from_env(api_key_env_var)
         self._api_key_env_var = api_key_env_var
-        # TODO: we need to make it so that if env var is set, we use that instead of the default
         self._model_id = model_id
         self._system_prompt = system_prompt
         self._validation_rules = validation_rules

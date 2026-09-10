@@ -20,7 +20,7 @@ from gatorgrade.hint.local_engine import (
     AutoHintEngine,
 )
 from gatorgrade.hint.remote_engine import (
-    REMOTE_API_KEY_DEFAULT,
+    REMOTE_API_KEY_ENV_VAR_DEFAULT,
     REMOTE_MODEL_DEFAULT,
     RemoteHintEngine,
 )
@@ -36,7 +36,7 @@ def create_auto_hint_engine(  # noqa: PLR0913
     filename: Path,
     auto_hint_model: str,
     auto_hint_url: Optional[str],
-    auto_hint_api_key: Optional[str],
+    api_key_env_var: Optional[str],
     system_prompt: str | None = None,
     validation_rules: dict[str, list[str]] | None = None,
     auto_hint_model_default: str | None = None,
@@ -59,7 +59,7 @@ def create_auto_hint_engine(  # noqa: PLR0913
         auto_hint_model: Model ID from the CLI, or a sentinel
             default value.
         auto_hint_url: URL of the remote API server, or None.
-        auto_hint_api_key: API key for the remote server.
+        api_key_env_var: Name of the environment variable that contains the API key.
         system_prompt: Optional custom system prompt.
             If provided, this replaces the built-in default.
         validation_rules: Optional dict with must_contain
@@ -109,7 +109,7 @@ def create_auto_hint_engine(  # noqa: PLR0913
         # attempt to create the remote engine
         remote_engine = try_create_remote_engine(
             auto_hint_url,
-            auto_hint_api_key,
+            api_key_env_var,
             remote_model_id,
             system_prompt=system_prompt,
             validation_rules=validation_rules,
@@ -147,7 +147,7 @@ def create_auto_hint_engine(  # noqa: PLR0913
 
 def try_create_remote_engine(
     url: str,
-    api_key: Optional[str],
+    api_key_env_var: Optional[str],
     model_id: str,
     system_prompt: str | None = None,
     validation_rules: dict[str, list[str]] | None = None,
@@ -165,7 +165,7 @@ def try_create_remote_engine(
     try:
         remote = RemoteHintEngine(
             base_url=url,
-            api_key=api_key or REMOTE_API_KEY_DEFAULT,
+            api_key_env_var=api_key_env_var or REMOTE_API_KEY_ENV_VAR_DEFAULT,
             model_id=model_id,
             system_prompt=system_prompt,
             validation_rules=validation_rules,
