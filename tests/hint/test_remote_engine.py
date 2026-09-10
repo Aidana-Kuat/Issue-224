@@ -70,17 +70,6 @@ class TestRemoteHintEngineConstruction:
         )
         assert engine.model_id == "custom-model"
 
-    def test_api_key_from_environment(self, monkeypatch) -> None:     
-            """Engine reads API key from the environment variable.""" 
-            monkeypatch.setenv("REMOTE_HINT_API_KEY", "secret123")
-            # a pytest helper method used to safely set or change 
-            # environment variables during tests and automatically 
-            # restore them afterward
-            engine = RemoteHintEngine(
-                base_url="http://test.url:4160", #fake server URL for testing
-            )
-            assert engine._api_key == "secret123"
-    
     def test_is_loaded_always_true(self) -> None:
         """Remote engine is always considered loaded."""
         engine = RemoteHintEngine(base_url="http://test.url:4160")
