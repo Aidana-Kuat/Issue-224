@@ -145,7 +145,7 @@ class RemoteHintEngine:
             env_var_name: Name of the environment variable to read.
 
         Returns:
-            The API key string, or a placeholder if the variable is not set.
+            The API key string, or None if the environment variable is not set.
 
         """
         return os.environ.get(env_var_name, None)
