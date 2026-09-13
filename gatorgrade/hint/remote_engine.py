@@ -1,6 +1,5 @@
 """Remote auto-hint engine using OpenAI-compatible APIs."""
 import os
-from posix import stat
 from typing import Any, Optional, cast
 
 from gatorgrade.hint.support import (
