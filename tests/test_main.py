@@ -672,24 +672,26 @@ def test_gatorgrade_with_auto_hint_url_requires_auto_hint(
     assert result.exit_code != 0
 
 
-def test_gatorgrade_with_auto_hint_api_key_requires_auto_hint(
+def test_gatorgrade_with_auto_hint_key_env_requires_auto_hint(
     chdir: Any, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    """Using --auto-hint-api-key without --auto-hint exits with an error."""
+    """Using --auto-hint-key-env without --auto-hint exits with an error."""
     chdir("tests/test_assignment")
-    result = runner.invoke(main.app, ["--auto-hint-api-key", "sk-test-key"])
+    result = runner.invoke(
+        main.app, ["--auto-hint-key-env", "TEST_AUTO_HINT_API_KEY"]
+    )
     capsys.readouterr()
     assert result.exit_code != 0
 
 
-def test_gatorgrade_with_auto_hint_api_key_requires_url(
+def test_gatorgrade_with_auto_hint_key_env_requires_url(
     chdir: Any, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    """Using --auto-hint-api-key without --auto-hint-url exits with an error."""
+    """Using --auto-hint-key-env without --auto-hint-url exits with an error."""
     chdir("tests/test_assignment")
     result = runner.invoke(
         main.app,
-        ["--auto-hint", "--auto-hint-api-key", "sk-test-key"],
+        ["--auto-hint", "--auto-hint-key-env", "TEST_AUTO_HINT_API_KEY"],
     )
     capsys.readouterr()
     assert result.exit_code != 0

@@ -169,7 +169,7 @@ class TestAutoHintOptionsValidation:
             auto_hint=True,
             auto_hint_model="custom/model",
             auto_hint_url="http://localhost:4000",
-            auto_hint_api_key="sk-test-key",
+            auto_hint_key_env="TEST_AUTO_HINT_API_KEY",
         )
         assert errors == []
 
@@ -179,7 +179,7 @@ class TestAutoHintOptionsValidation:
             auto_hint=True,
             auto_hint_model="__default_model__",
             auto_hint_url=None,
-            auto_hint_api_key=None,
+            auto_hint_key_env=None,
         )
         assert errors == []
 
@@ -189,7 +189,7 @@ class TestAutoHintOptionsValidation:
             auto_hint=False,
             auto_hint_model="custom/model",
             auto_hint_url=None,
-            auto_hint_api_key=None,
+            auto_hint_key_env=None,
         )
         assert len(errors) >= 1
         assert "--auto-hint-model" in errors[0]
@@ -201,34 +201,34 @@ class TestAutoHintOptionsValidation:
             auto_hint=False,
             auto_hint_model="__default_model__",
             auto_hint_url="http://localhost:4000",
-            auto_hint_api_key=None,
+            auto_hint_key_env=None,
         )
         assert len(errors) >= 1
         assert "--auto-hint-url" in errors[0]
         assert "--auto-hint" in errors[0]
 
-    def test_api_key_requires_auto_hint(self) -> None:
-        """Error when --auto-hint-api-key is used without --auto-hint."""
+    def test_key_env_requires_auto_hint(self) -> None:
+        """Error when --auto-hint-key-env is used without --auto-hint."""
         errors = validate.validate_auto_hint_options(
             auto_hint=False,
             auto_hint_model="__default_model__",
             auto_hint_url=None,
-            auto_hint_api_key="sk-test-key",
+            auto_hint_key_env="TEST_AUTO_HINT_API_KEY",
         )
         assert len(errors) >= 1
-        assert "--auto-hint-api-key" in errors[0]
+        assert "--auto-hint-key-env" in errors[0]
         assert "--auto-hint" in errors[0]
 
-    def test_api_key_requires_url(self) -> None:
-        """Error when --auto-hint-api-key is used without --auto-hint-url."""
+    def test_key_env_requires_url(self) -> None:
+        """Error when --auto-hint-key-env is used without --auto-hint-url."""
         errors = validate.validate_auto_hint_options(
             auto_hint=True,
             auto_hint_model="__default_model__",
             auto_hint_url=None,
-            auto_hint_api_key="sk-test-key",
+            auto_hint_key_env="TEST_AUTO_HINT_API_KEY",
         )
         assert len(errors) >= 1
-        assert "--auto-hint-api-key" in errors[0]
+        assert "--auto-hint-key-env" in errors[0]
         assert "--auto-hint-url" in errors[0]
 
     def test_multiple_errors_reported(self) -> None:
@@ -237,7 +237,7 @@ class TestAutoHintOptionsValidation:
             auto_hint=False,
             auto_hint_model="custom/model",
             auto_hint_url=None,
-            auto_hint_api_key="sk-test-key",
+            auto_hint_key_env="TEST_AUTO_HINT_API_KEY",
         )
         assert len(errors) >= 2  # noqa: PLR2004
 

@@ -1,5 +1,6 @@
 """Remote auto-hint engine using OpenAI-compatible APIs."""
 
+import os
 from typing import Any, Optional, cast
 
 from gatorgrade.hint.support import (
@@ -14,7 +15,7 @@ EMPTY = ""
 
 # constants for the remote hint engine
 REMOTE_MODEL_DEFAULT = "Qwen/Qwen3.6-35B-A3B"
-REMOTE_API_KEY_DEFAULT = "not-needed"
+REMOTE_KEY_ENV_DEFAULT = "AUTO_HINT_KEY_ENV"
 
 # the openai Python library rejects an empty api_key, so
 # the default is a placeholder string for servers that do
@@ -83,7 +84,7 @@ class RemoteHintEngine:
     def __init__(
         self,
         base_url: str,
-        api_key: str = REMOTE_API_KEY_DEFAULT,
+        api_key_env: str = REMOTE_KEY_ENV_DEFAULT,
         model_id: str = REMOTE_MODEL_DEFAULT,
         system_prompt: str | None = None,
         validation_rules: dict[str, list[str]] | None = None,
@@ -93,7 +94,7 @@ class RemoteHintEngine:
         Args:
             base_url: Base URL of an OpenAI-compatible API server.
                 The /v1 path suffix is appended by the provider.
-            api_key: API key for the server, if required.
+            api_key_env: API key environment variable name.
             model_id: Name of the model exposed at the server.
             system_prompt: Optional custom system prompt.
                 If provided, this replaces the built-in default.
@@ -103,7 +104,8 @@ class RemoteHintEngine:
 
         """
         self._base_url = base_url
-        self._api_key = api_key
+        self._api_key_env = api_key_env
+        self._api_key = self._get_env_val_from_var(api_key_env)
         self._model_id = model_id
         self._system_prompt = system_prompt
         self._validation_rules = validation_rules
@@ -131,6 +133,19 @@ class RemoteHintEngine:
         The remote model is served by the API server and does not
         need to be downloaded or loaded locally.
         """
+
+    @staticmethod
+    def _get_env_val_from_var(env_variable: str) -> str | None:
+        """Return value for environemnt variable.
+
+        Args:
+            env_variable: Name of the variable where API key is stored.
+
+        Returns:
+            str of API key
+
+        """
+        return os.environ.get(env_variable)
 
     @staticmethod
     def _is_valid_hint(
@@ -242,6 +257,13 @@ class RemoteHintEngine:
         try:
             from openai import OpenAI  # noqa: PLC0415
         except ImportError:
+            self.last_error = EXTRA_AUTO_HINTS_INSTALLATION_INSTRUCTIONS
+            return None, False
+        if not self._api_key:
+            self.last_error = (
+                f"API key environment variable {self._api_key_env} is not set."
+            )
+            # TODO: consider adding EXPORT instrucitons here
             return None, False
         # use the per-call system_prompt if provided, otherwise
         # fall back to the engine-level prompt or the built-in default
