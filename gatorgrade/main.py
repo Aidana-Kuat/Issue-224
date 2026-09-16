@@ -509,6 +509,7 @@ def gatorgrade(  # noqa: PLR0912, PLR0913, PLR0915
     auto_hint_key_env: Optional[str] = typer.Option(
         None,
         "--auto-hint-key-env",
+        "-k",
         help=(
             "Name of the environment variable containing the remote API "
             "key (default: AUTO_HINT_KEY_ENV). "
