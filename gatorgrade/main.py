@@ -513,8 +513,9 @@ def gatorgrade(  # noqa: PLR0912, PLR0913, PLR0915
             "Name of the environment variable containing the remote API "
             "key (default: AUTO_HINT_KEY_ENV). "
             "Requires --auto-hint-url."
+            "Windows environment set-up: setx AUTO_HINT_KEY_ENV \"<your_api_key>\"'"
+            "Linux/Mac environment set-up: export AUTO_HINT_KEY_ENV=\"<your_api_key>\""
         ),
-        # TODO: EXPORT instructions here
     ),
     _version: bool = typer.Option(
         False,
