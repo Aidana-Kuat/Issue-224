@@ -16,7 +16,6 @@ from gatorgrade.input.parse_config import (
     get_validation_phrases_file,
 )
 
-
 def resolve_system_prompt(
     config_path: Path, config_dir: Optional[Path]
 ) -> Optional[str]:

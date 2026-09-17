@@ -509,6 +509,7 @@ def gatorgrade(  # noqa: PLR0912, PLR0913, PLR0915
     auto_hint_api_key_var_name: Optional[str] = typer.Option(
         None,
         "--auto-hint-api-key",
+        "-k",
         help=(
             "API key for the remote auto-hint server "
             "(requires --auto-hint-url)."
