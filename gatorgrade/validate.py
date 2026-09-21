@@ -323,6 +323,9 @@ AUTO_HINT_URL_REQUIRES_AUTO_HINT_FMT = (
 AUTO_HINT_KEY_ENV_REQUIRES_URL_FMT = (
     "The {} flag requires {} to specify a remote auto-hint server."
 )
+AUTO_HINT_KEY_ENV_NAME_ERR_FMT = (
+    "The {} value must be a valid environment variable name, got '{}'."
+)
 
 # flag display names used in error messages
 AUTO_HINT_MODEL_DISPLAY = "--auto-hint-model"
@@ -347,6 +350,7 @@ def validate_auto_hint_options(
     - --auto-hint-model requires --auto-hint
     - --auto-hint-url requires --auto-hint
     - --auto-hint-key-env requires both --auto-hint and --auto-hint-url
+    - --auto-hint-key-env must name a valid environment variable
 
     Args:
         auto_hint: Whether --auto-hint was passed.
@@ -375,6 +379,12 @@ def validate_auto_hint_options(
         )
     # --auto-hint-key-env requires both --auto-hint and --auto-hint-url
     if auto_hint_key_env is not None:
+        if not VALID_ENV_VAR_NAME.fullmatch(auto_hint_key_env):
+            errors.append(
+                AUTO_HINT_KEY_ENV_NAME_ERR_FMT.format(
+                    AUTO_HINT_KEY_ENV_DISPLAY, auto_hint_key_env
+                )
+            )
         if not auto_hint:
             errors.append(
                 AUTO_HINT_URL_REQUIRES_AUTO_HINT_FMT.format(

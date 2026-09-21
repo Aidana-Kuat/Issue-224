@@ -697,6 +697,25 @@ def test_gatorgrade_with_auto_hint_key_env_requires_url(
     assert result.exit_code != 0
 
 
+def test_gatorgrade_rejects_invalid_auto_hint_key_env_alias(
+    chdir: Any, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Using -k with an invalid environment variable name exits."""
+    chdir("tests/test_assignment")
+    result = runner.invoke(
+        main.app,
+        [
+            "--auto-hint",
+            "--auto-hint-url",
+            "http://localhost:4000",
+            "-k",
+            "INVALID KEY",
+        ],
+    )
+    capsys.readouterr()
+    assert result.exit_code != 0
+
+
 def test_gatorgrade_with_output_limit_zero(
     chdir: Any, capsys: pytest.CaptureFixture[str]
 ) -> None:

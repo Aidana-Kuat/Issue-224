@@ -20,7 +20,6 @@ from gatorgrade.hint.local_engine import (
     AutoHintEngine,
 )
 from gatorgrade.hint.remote_engine import (
-    REMOTE_KEY_ENV_DEFAULT,
     REMOTE_MODEL_DEFAULT,
     RemoteHintEngine,
 )
@@ -59,7 +58,8 @@ def create_auto_hint_engine(  # noqa: PLR0913
         auto_hint_model: Model ID from the CLI, or a sentinel
             default value.
         auto_hint_url: URL of the remote API server, or None.
-        auto_hint_key_env: Name of the environment variable containing API key for the remote server.
+        auto_hint_key_env: Name of the environment variable containing
+            the remote server API key.
         system_prompt: Optional custom system prompt.
             If provided, this replaces the built-in default.
         validation_rules: Optional dict with must_contain
@@ -165,7 +165,7 @@ def try_create_remote_engine(
     try:
         remote = RemoteHintEngine(
             base_url=url,
-            api_key_env=api_key_env or REMOTE_KEY_ENV_DEFAULT,
+            api_key_env=api_key_env,
             model_id=model_id,
             system_prompt=system_prompt,
             validation_rules=validation_rules,

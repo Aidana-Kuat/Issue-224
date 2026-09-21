@@ -231,6 +231,19 @@ class TestAutoHintOptionsValidation:
         assert "--auto-hint-key-env" in errors[0]
         assert "--auto-hint-url" in errors[0]
 
+    def test_key_env_name_must_be_valid(self) -> None:
+        """Invalid environment variable names produce validation errors."""
+        invalid_names = ("", " ", "1API_KEY", "API-KEY", "API KEY")
+        for invalid_name in invalid_names:
+            errors = validate.validate_auto_hint_options(
+                auto_hint=True,
+                auto_hint_model="__default_model__",
+                auto_hint_url="http://localhost:4000",
+                auto_hint_key_env=invalid_name,
+            )
+            assert len(errors) == 1
+            assert "valid environment variable name" in errors[0]
+
     def test_multiple_errors_reported(self) -> None:
         """Multiple errors are reported when several flags are misused."""
         errors = validate.validate_auto_hint_options(
