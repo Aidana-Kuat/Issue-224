@@ -147,8 +147,12 @@ The following options control how GatorGrade runs:
   generation. When provided, the remote model is used instead of the local model.
   Falls back to the default local model on any remote server errors. This option
   requires `--auto-hint`.
-- `--auto-hint-api-key`: API key for the remote auto-hint server. This option
-  requires `--auto-hint-url`.
+- `--auto-hint-key-env`, `-k`: Name of the environment variable containing the
+  remote API key. Defaults to `AUTO_HINT_KEY_ENV`. This option requires
+  `--auto-hint-url`. In Linux or macOS, set the default for the current shell
+  with `export AUTO_HINT_KEY_ENV="<your_api_key>"`. In PowerShell, use
+  `$env:AUTO_HINT_KEY_ENV="<your_api_key>"`. Leave it unset for a keyless
+  local server.
 - `--auto-hint-track`, `--no-auto-hint-track`: Save or skip saving auto-hint
   generation details to `autohints.json` in the current working directory.
   Tracking is enabled by default and only applies when `--auto-hint` is active

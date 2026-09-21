@@ -144,7 +144,7 @@ VERBOSE_FLAG = "--verbose"
 AUTO_HINT_FLAG = "--auto-hint"
 AUTO_HINT_MODEL_FLAG = "--auto-hint-model"
 AUTO_HINT_URL_FLAG = "--auto-hint-url"
-AUTO_HINT_API_KEY_FLAG = "--auto-hint-api-key"
+AUTO_HINT_KEY_ENV_FLAG = "--auto-hint-key-env"
 AUTO_HINT_TRACK_FLAG = "--auto-hint-track"
 FILTER_MODE_FLAG = "--filter-mode"
 FILTER_BY_FLAG = "--filter-by"
@@ -506,12 +506,17 @@ def gatorgrade(  # noqa: PLR0912, PLR0913, PLR0915
             "back to default local model on any remote URL errors."
         ),
     ),
-    auto_hint_api_key: Optional[str] = typer.Option(
+    auto_hint_key_env: Optional[str] = typer.Option(
         None,
-        "--auto-hint-api-key",
+        "--auto-hint-key-env",
+        "-k",
         help=(
-            "API key for the remote auto-hint server "
-            "(requires --auto-hint-url)."
+            "Name of the environment variable containing the remote API "
+            "key (default: AUTO_HINT_KEY_ENV). "
+            "Requires --auto-hint-url. "
+            'PowerShell: $env:AUTO_HINT_KEY_ENV="<your_api_key>". '
+            'Linux/macOS: export AUTO_HINT_KEY_ENV="<your_api_key>". '
+            "Leave it unset for a keyless server."
         ),
     ),
     _version: bool = typer.Option(
@@ -674,12 +679,12 @@ def gatorgrade(  # noqa: PLR0912, PLR0913, PLR0915
         # this catches:
         #   --auto-hint-model without --auto-hint
         #   --auto-hint-url without --auto-hint
-        #   --auto-hint-api-key without --auto-hint-url
+        #   --auto-hint-key-env without --auto-hint-url
         auto_hint_errors = validate_auto_hint_options(
             auto_hint,
             auto_hint_model,
             auto_hint_url,
-            auto_hint_api_key,
+            auto_hint_key_env,
         )
         if auto_hint_errors:
             checks_status = False
@@ -753,8 +758,8 @@ def gatorgrade(  # noqa: PLR0912, PLR0913, PLR0915
                 AUTO_HINT_URL_FLAG: str(auto_hint_url)
                 if auto_hint_url
                 else None,
-                AUTO_HINT_API_KEY_FLAG: str(auto_hint_api_key)
-                if auto_hint_api_key
+                AUTO_HINT_KEY_ENV_FLAG: str(auto_hint_key_env)
+                if auto_hint_key_env
                 else None,
                 AUTO_HINT_TRACK_FLAG: auto_hint_track,
                 FILTER_QUERY_FLAG: filter_query,
@@ -928,7 +933,7 @@ def gatorgrade(  # noqa: PLR0912, PLR0913, PLR0915
                         resolved_filename,
                         auto_hint_model,
                         auto_hint_url,
-                        auto_hint_api_key,
+                        auto_hint_key_env,
                         system_prompt=system_prompt,
                         validation_rules=validation_rules,
                         auto_hint_model_default=AUTO_HINT_MODEL_DEFAULT,
