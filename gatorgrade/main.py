@@ -514,9 +514,10 @@ def gatorgrade(  # noqa: PLR0912, PLR0913, PLR0915
             "Name of the environment variable containing the remote API "
             "key (default: AUTO_HINT_KEY_ENV). "
             "Requires --auto-hint-url. "
-            'PowerShell: $env:AUTO_HINT_KEY_ENV="<your_api_key>". '
-            'Linux/macOS: export AUTO_HINT_KEY_ENV="<your_api_key>". '
-            "Leave it unset for a keyless server."
+            "Configure the variable persistently using your operating "
+            "system or shell settings; see the README. "
+            "For a keyless server, omit this option and leave the default "
+            "variable unset."
         ),
     ),
     _version: bool = typer.Option(

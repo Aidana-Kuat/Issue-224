@@ -149,10 +149,9 @@ The following options control how GatorGrade runs:
   requires `--auto-hint`.
 - `--auto-hint-key-env`, `-k`: Name of the environment variable containing the
   remote API key. Defaults to `AUTO_HINT_KEY_ENV`. This option requires
-  `--auto-hint-url`. In Linux or macOS, set the default for the current shell
-  with `export AUTO_HINT_KEY_ENV="<your_api_key>"`. In PowerShell, use
-  `$env:AUTO_HINT_KEY_ENV="<your_api_key>"`. Leave it unset for a keyless
-  local server.
+  `--auto-hint-url`. See
+  [Persistent Remote API Key](#persistent-remote-api-key) for setup. For a
+  keyless local server, omit this option.
 - `--auto-hint-track`, `--no-auto-hint-track`: Save or skip saving auto-hint
   generation details to `autohints.json` in the current working directory.
   Tracking is enabled by default and only applies when `--auto-hint` is active
@@ -198,6 +197,37 @@ The following options control how GatorGrade runs:
   intersection. If no usable history exists, all checks are run with a warning.
   The value must be a positive integer.
 - `--version`: Show the GatorGrade version and exit.
+
+### Persistent Remote API Key
+
+For an authenticated remote auto-hint server, store the API key persistently in
+`AUTO_HINT_KEY_ENV`. This keeps the key out of the command line and makes it
+available to GatorGrade in new terminal sessions.
+
+On Linux or macOS, add this line to your shell startup file, such as `~/.zshrc`,
+`~/.bashrc`, or `~/.bash_profile`:
+
+```bash
+export AUTO_HINT_KEY_ENV="<your_api_key>"
+```
+
+On Windows, run this command in PowerShell to save the variable for your user
+account:
+
+```powershell
+[Environment]::SetEnvironmentVariable(
+    "AUTO_HINT_KEY_ENV",
+    "<your_api_key>",
+    "User"
+)
+```
+
+Open a new terminal after saving the variable. For an IDE-integrated terminal,
+close the existing terminal and open a new one. On Windows, restart the IDE
+first so that it inherits the updated user variable. To use a different
+variable name, save the key under that name and pass it to
+`--auto-hint-key-env` or `-k`. For a keyless local server, omit this option and
+leave `AUTO_HINT_KEY_ENV` unset.
 
 ## Configuring Checks
 
