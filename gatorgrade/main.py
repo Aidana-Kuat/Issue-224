@@ -189,11 +189,13 @@ def _hide_environment_variables(
     }
     for name in variable_names:
         os.environ.pop(name, None)
+        os.unsetenv(name)
     try:
         yield
     finally:
         for name in variable_names:
             os.environ.pop(name, None)
+            os.unsetenv(name)
         os.environ.update(original_values)
 
 
