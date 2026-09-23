@@ -261,7 +261,7 @@ class RemoteHintEngine:
         """
         # lazily import the openai client only when needed.
         try:
-            from openai import OpenAI  # noqa: PLC0415
+            from openai import OpenAI, OpenAIError  # noqa: PLC0415
         except ImportError:
             self.last_error = EXTRA_AUTO_HINTS_INSTALLATION_INSTRUCTIONS
             return None, False
@@ -307,8 +307,13 @@ class RemoteHintEngine:
                 "max_tokens": REMOTE_HINT_MAX_TOKENS,
                 "temperature": REMOTE_HINT_TEMPERATURE,
                 "timeout": REMOTE_HINT_TIMEOUT_MS / 1000,
-                "extra_body": ENABLE_THINKING_DEFAULT,
             }
+
+            # Only send Qwen-specific thinking configuration to Qwen models.
+            if "qwen" in self._model_id.lower():
+                completions_kwargs["extra_body"] = ENABLE_THINKING_DEFAULT
+
+
             # some servers (e.g., Pi coding agent and pi-gateway
             # when it is making available LLMs through some type
             # of subscription or other proxies) do not support top_p,
@@ -341,8 +346,8 @@ class RemoteHintEngine:
             ):
                 return hint, True
             return hint, False
-        except Exception as exc:  # pylint: disable=broad-except
-            self.last_error = str(exc)[:300]
+        except OpenAIError as exc:  
+            self.last_error = f"{type(exc).__name__}: {exc}"[:300]
             # return None so the caller's fallback engine can
             # try the local model instead, using the default
             # local model which should always install and run
