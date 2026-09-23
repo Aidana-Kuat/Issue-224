@@ -229,6 +229,15 @@ variable name, save the key under that name and pass it to
 `--auto-hint-key-env` or `-k`. For a keyless local server, omit this option and
 leave `AUTO_HINT_KEY_ENV` unset.
 
+Environment variables reduce accidental exposure, but they are not a secret
+manager. Programs launched from a shell normally inherit its environment.
+GatorGrade temporarily hides `AUTO_HINT_KEY_ENV` and the selected custom key
+variable while configuration setup commands and checks run. This prevents
+ordinary inherited-environment exposure, but it is not a sandbox: code running
+as the same user may still read persistent shell profiles or Windows user
+settings. Use a dedicated, restricted API key and an operating-system secret
+manager when stronger protection is required.
+
 ## Configuring Checks
 
 Checks are defined in a `gatorgrade.yml` file. Each check can be either a
