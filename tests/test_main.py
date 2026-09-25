@@ -35,6 +35,7 @@ SECURITY_CONFIG_NAME = "security-test.yml"
 SETUP_PROBE_COMMAND = "setup-probe"
 SHELL_PROBE_COMMAND = "shell-probe"
 INVALID_AUTO_HINT_KEY_ENV = "BAD=NAME"
+RUN_CHECKS_CLI_ARGS_INDEX = 5
 
 
 def patch_open(
@@ -800,6 +801,10 @@ def test_gatorgrade_hides_default_and_custom_keys_from_assignment_code(
         assert main.REMOTE_KEY_ENV_DEFAULT not in os.environ
         assert CUSTOM_AUTO_HINT_KEY_ENV not in os.environ
         assert os.environ[UNRELATED_ENV] == UNRELATED_VALUE
+        assert (
+            _args[RUN_CHECKS_CLI_ARGS_INDEX][main.AUTO_HINT_KEY_ENV_FLAG]
+            == CUSTOM_AUTO_HINT_KEY_ENV
+        )
         assert kwargs["auto_hint_engine"] is fake_engine
         return True
 
@@ -825,6 +830,43 @@ def test_gatorgrade_hides_default_and_custom_keys_from_assignment_code(
     assert os.environ[main.REMOTE_KEY_ENV_DEFAULT] == DEFAULT_AUTO_HINT_KEY
     assert os.environ[CUSTOM_AUTO_HINT_KEY_ENV] == CUSTOM_AUTO_HINT_KEY
     assert os.environ[UNRELATED_ENV] == UNRELATED_VALUE
+
+
+def test_gatorgrade_records_effective_default_key_environment(
+    chdir: Any,
+    capsys: pytest.CaptureFixture[str],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Remote report metadata records the effective default key variable."""
+    fake_engine = object()
+
+    def fake_create_auto_hint_engine(*_args: Any, **_kwargs: Any) -> object:
+        return fake_engine
+
+    def fake_run_checks(*args: Any, **kwargs: Any) -> bool:
+        assert (
+            args[RUN_CHECKS_CLI_ARGS_INDEX][main.AUTO_HINT_KEY_ENV_FLAG]
+            == main.REMOTE_KEY_ENV_DEFAULT
+        )
+        assert kwargs["auto_hint_engine"] is fake_engine
+        return True
+
+    monkeypatch.setattr(
+        main, "create_auto_hint_engine", fake_create_auto_hint_engine
+    )
+    monkeypatch.setattr(main, "run_checks", fake_run_checks)
+    chdir("tests/test_assignment")
+    result = runner.invoke(
+        main.app,
+        [
+            "--auto-hint",
+            "--auto-hint-url",
+            TEST_AUTO_HINT_URL,
+            "--no-report-history",
+        ],
+    )
+    capsys.readouterr()
+    assert result.exit_code == 0
 
 
 def test_gatorgrade_with_auto_hint_url_requires_auto_hint(
