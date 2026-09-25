@@ -26,6 +26,9 @@ from gatorgrade.hint.support import (
 
 TEST_API_KEY = "test-api-key"
 TEST_API_KEY_ENV = "TEST_AUTO_HINT_API_KEY"
+MISSING_API_KEY_ERROR = (
+    f"API key environment variable {TEST_API_KEY_ENV} is not set."
+)
 
 
 @pytest.fixture(autouse=True)
@@ -265,6 +268,20 @@ class TestRemoteHintEngineGenerateHint:
         assert engine.last_error is not None
         assert TEST_API_KEY_ENV in engine.last_error
         fake_openai.OpenAI.assert_not_called()
+
+    def test_missing_named_key_is_reported_before_import_error(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """A missing named key is reported before importing the SDK."""
+        monkeypatch.delenv(TEST_API_KEY_ENV)
+        engine = RemoteHintEngine(
+            base_url="http://test.url:4160",
+            api_key_env=TEST_API_KEY_ENV,
+        )
+        with patch.dict("sys.modules", {"openai": None}, clear=False):
+            hint, _ = engine.generate_hint(description="test")
+        assert hint is None
+        assert engine.last_error == MISSING_API_KEY_ERROR
 
     def test_generate_hint_returns_none_on_exception(self) -> None:
         """Returns None when the API raises."""

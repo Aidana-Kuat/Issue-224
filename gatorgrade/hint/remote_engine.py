@@ -259,16 +259,16 @@ class RemoteHintEngine:
               tests or assertions.
 
         """
+        if not self._api_key:
+            self.last_error = (
+                f"API key environment variable {self._api_key_env} is not set."
+            )
+            return None, False
         # lazily import the openai client only when needed.
         try:
             from openai import OpenAI  # noqa: PLC0415
         except ImportError:
             self.last_error = EXTRA_AUTO_HINTS_INSTALLATION_INSTRUCTIONS
-            return None, False
-        if not self._api_key:
-            self.last_error = (
-                f"API key environment variable {self._api_key_env} is not set."
-            )
             return None, False
         # use the per-call system_prompt if provided, otherwise
         # fall back to the engine-level prompt or the built-in default
