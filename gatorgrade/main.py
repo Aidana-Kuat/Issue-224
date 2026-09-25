@@ -760,6 +760,11 @@ def gatorgrade(  # noqa: PLR0912, PLR0913, PLR0915
             resolved_filter_type = (
                 filter_type if filter_type is not None else DEFAULT_FILTER_TYPE
             )
+            effective_auto_hint_key_env = (
+                (auto_hint_key_env or REMOTE_KEY_ENV_DEFAULT)
+                if auto_hint_url
+                else None
+            )
             # create a dictionary of the CLI arguments to pass to the report
             # (this will enable them to be saved inside of a report)
             cli_args = {
@@ -781,9 +786,7 @@ def gatorgrade(  # noqa: PLR0912, PLR0913, PLR0915
                 AUTO_HINT_URL_FLAG: str(auto_hint_url)
                 if auto_hint_url
                 else None,
-                AUTO_HINT_KEY_ENV_FLAG: str(auto_hint_key_env)
-                if auto_hint_key_env
-                else None,
+                AUTO_HINT_KEY_ENV_FLAG: effective_auto_hint_key_env,
                 AUTO_HINT_TRACK_FLAG: auto_hint_track,
                 FILTER_QUERY_FLAG: filter_query,
                 FILTER_MODE_FLAG: resolved_filter_mode.value
