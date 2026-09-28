@@ -25,7 +25,9 @@ from gatorgrade.hint.support import (
 TEST_API_KEY = "test-api-key"
 TEST_API_KEY_ENV = "TEST_AUTO_HINT_API_KEY"
 MISSING_API_KEY_ERROR = (
-    f"API key environment variable {TEST_API_KEY_ENV} is not set."
+    f"API key environment variable {TEST_API_KEY_ENV} is not set. Save it "
+    "in your shell startup file or Windows user environment for future "
+    "sessions, then restart your terminal or IDE; see README."
 )
 MILLISECONDS_PER_SECOND = 1000
 

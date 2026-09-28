@@ -17,6 +17,11 @@ EMPTY = ""
 REMOTE_MODEL_DEFAULT = "Qwen/Qwen3.6-35B-A3B"
 REMOTE_KEY_ENV_DEFAULT = "AUTO_HINT_KEY_ENV"
 REMOTE_API_KEY_DEFAULT = "not-needed"
+MISSING_KEY_ENV_ERROR = (
+    "API key environment variable {} is not set. Save it in your shell "
+    "startup file or Windows user environment for future sessions, then "
+    "restart your terminal or IDE; see README."
+)
 
 # the openai client rejects an empty API key, so keyless servers receive
 # a non-secret placeholder when the default environment variable is unset.
@@ -251,9 +256,7 @@ class RemoteHintEngine:
 
         """
         if not self._api_key:
-            self.last_error = (
-                f"API key environment variable {self._api_key_env} is not set."
-            )
+            self.last_error = MISSING_KEY_ENV_ERROR.format(self._api_key_env)
             return None, False
         # lazily import the openai client only when needed.
         try:
