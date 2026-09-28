@@ -183,7 +183,7 @@ OS_RELEASE_KEY = "os_release"
 def _hide_environment_variables(
     variable_names: set[str],
 ) -> Iterator[None]:
-    """Temporarily hide environment variables and restore their state."""
+    """Hide environment variables and restore values tracked by os.environ."""
     original_values = {
         name: os.environ[name] for name in variable_names if name in os.environ
     }

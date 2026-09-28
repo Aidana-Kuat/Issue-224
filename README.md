@@ -208,15 +208,19 @@ For an authenticated remote auto-hint server, store the API key persistently in
 `AUTO_HINT_KEY_ENV`. This keeps the key out of the command line and makes it
 available to GatorGrade in new terminal sessions.
 
-On Linux or macOS, add this line to your shell startup file, such as `~/.zshrc`,
-`~/.bashrc`, or `~/.bash_profile`:
+On Linux or macOS, running `export` in a terminal sets the key only for that
+shell session. To make it available in future sessions, open your shell startup
+file in a text editor, add the following line, and save the file. Use `~/.zshrc`
+for zsh (the macOS default) or `~/.bashrc` for bash; some bash setups use
+`~/.bash_profile` instead.
 
 ```bash
 export AUTO_HINT_KEY_ENV="<your_api_key>"
 ```
 
-On Windows, run this command in PowerShell to save the variable for your user
-account:
+On Windows, run this command in PowerShell to save the variable permanently for
+your user account. Setting `$env:AUTO_HINT_KEY_ENV` alone lasts only for the
+current PowerShell session.
 
 ```powershell
 [Environment]::SetEnvironmentVariable(
@@ -226,12 +230,11 @@ account:
 )
 ```
 
-Open a new terminal after saving the variable. For an IDE-integrated terminal,
-close the existing terminal and open a new one. On Windows, restart the IDE
-first so that it inherits the updated user variable. To use a different
-variable name, save the key under that name and pass it to
-`--auto-hint-key-env` or `-k`. For a keyless local server, omit this option and
-leave `AUTO_HINT_KEY_ENV` unset.
+Open a new terminal after saving the variable. On Windows, restart an
+already-running terminal app or IDE; a new tab may inherit its parent's old
+environment. To use a different variable name, save the key under that name
+and pass it to `--auto-hint-key-env` or `-k`. For a keyless local server, omit
+this option and leave `AUTO_HINT_KEY_ENV` unset.
 
 Environment variables reduce accidental exposure, but they are not a secret
 manager. Programs launched from a shell normally inherit its environment.
