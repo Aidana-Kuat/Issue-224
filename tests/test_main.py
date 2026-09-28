@@ -8,7 +8,7 @@ import subprocess
 import sys
 from io import StringIO
 from pathlib import Path
-from typing import Any, Callable, Generator, List
+from typing import Any, Callable, Generator, List, cast
 
 import pytest
 from typer.testing import CliRunner
@@ -718,10 +718,18 @@ def test_gatorgrade_hides_default_key_from_setup_and_checks(
     monkeypatch.setenv(UNRELATED_ENV, UNRELATED_VALUE)
     observed_commands = []
     gatorgrader_key_was_hidden = False
+    original_subprocess_run = subprocess.run
 
     def fake_subprocess_run(
         command: str, **_kwargs: Any
-    ) -> subprocess.CompletedProcess[bytes]:
+    ) -> subprocess.CompletedProcess[Any]:
+        # platform detection on Windows 3.11 runs a subprocess before checks.
+        # intercept only the assignment commands this test is probing.
+        if command not in (SETUP_PROBE_COMMAND, SHELL_PROBE_COMMAND):
+            return cast(
+                subprocess.CompletedProcess[Any],
+                original_subprocess_run(command, **_kwargs),
+            )
         assert main.REMOTE_KEY_ENV_DEFAULT not in os.environ
         assert os.environ[UNRELATED_ENV] == UNRELATED_VALUE
         observed_commands.append(command)
