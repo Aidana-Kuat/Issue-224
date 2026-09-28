@@ -7,10 +7,8 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from gatorgrade.hint.remote_engine import (
-    ENABLE_THINKING_DEFAULT,
     REMOTE_API_KEY_DEFAULT,
-    REMOTE_HINT_MAX_TOKENS,
-    REMOTE_HINT_TEMPERATURE,
+    REMOTE_HINT_TIMEOUT_MS,
     REMOTE_KEY_ENV_DEFAULT,
     REMOTE_MODEL_DEFAULT,
     USER_AGENT_KEY,
@@ -29,6 +27,7 @@ TEST_API_KEY_ENV = "TEST_AUTO_HINT_API_KEY"
 MISSING_API_KEY_ERROR = (
     f"API key environment variable {TEST_API_KEY_ENV} is not set."
 )
+MILLISECONDS_PER_SECOND = 1000
 
 
 @pytest.fixture(autouse=True)
@@ -331,11 +330,11 @@ class TestRemoteHintEngineGenerateHint:
         )
         call_kwargs = mock_client.chat.completions.create.call_args[1]
         assert call_kwargs["model"] == "test-model"
-        assert call_kwargs["max_tokens"] == REMOTE_HINT_MAX_TOKENS
-        assert call_kwargs["temperature"] == REMOTE_HINT_TEMPERATURE
-        assert "top_p" not in call_kwargs
-        assert "extra_body" in call_kwargs
-        assert call_kwargs["extra_body"] == ENABLE_THINKING_DEFAULT
+        assert set(call_kwargs) == {"model", "messages", "timeout"}
+        assert (
+            call_kwargs["timeout"]
+            == REMOTE_HINT_TIMEOUT_MS / MILLISECONDS_PER_SECOND
+        )
 
     def test_generate_hint_uses_placeholder_for_keyless_server(self) -> None:
         """A keyless server receives the non-secret placeholder key."""

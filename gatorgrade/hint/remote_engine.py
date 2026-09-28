@@ -1,7 +1,7 @@
 """Remote auto-hint engine using OpenAI-compatible APIs."""
 
 import os
-from typing import Any, Optional, cast
+from typing import Optional, cast
 
 from gatorgrade.hint.support import (
     EXTRA_AUTO_HINTS_INSTALLATION_INSTRUCTIONS,
@@ -20,21 +20,12 @@ REMOTE_API_KEY_DEFAULT = "not-needed"
 
 # the openai client rejects an empty API key, so keyless servers receive
 # a non-secret placeholder when the default environment variable is unset.
-REMOTE_HINT_MAX_TOKENS = 1200
-REMOTE_HINT_TEMPERATURE = 0.1
 REMOTE_HINT_TIMEOUT_MS = 180000
 
-# extra_body sent to disable visible thinking traces on Qwen
-# reasoning models; the model still reasons internally but the
-# response contains only the final answer in the content field.
-ENABLE_THINKING_KEYWORD = "enable_thinking"
-CHAT_TEMPLATE_KWARGS_KEYWORD = "chat_template_kwargs"
-THINKING_DEFAULT_VALUE = False
-ENABLE_THINKING_DEFAULT = {
-    CHAT_TEMPLATE_KWARGS_KEYWORD: {
-        ENABLE_THINKING_KEYWORD: THINKING_DEFAULT_VALUE
-    }
-}
+# retain these public constants for import compatibility; remote requests
+# now use server defaults instead of forcing these generation settings.
+REMOTE_HINT_MAX_TOKENS = 1200
+REMOTE_HINT_TEMPERATURE = 0.1
 
 # custom user-agent header sent with every request to the remote API
 # server; some reverse proxies, such as cloudflare WAF, block the
@@ -294,31 +285,19 @@ class RemoteHintEngine:
                 default_headers={USER_AGENT_KEY: USER_AGENT_VALUE},
             )
             from openai.types.chat import (  # noqa: PLC0415
-                ChatCompletion,
                 ChatCompletionMessageParam,
             )
 
             typed_messages: list[ChatCompletionMessageParam] = cast(
                 list[ChatCompletionMessageParam], messages
             )
-            completions_kwargs: dict[str, Any] = {
-                "model": self._model_id,
-                "messages": typed_messages,
-                "max_tokens": REMOTE_HINT_MAX_TOKENS,
-                "temperature": REMOTE_HINT_TEMPERATURE,
-                "timeout": REMOTE_HINT_TIMEOUT_MS / 1000,
-                "extra_body": ENABLE_THINKING_DEFAULT,
-            }
-            # some servers (e.g., Pi coding agent and pi-gateway
-            # when it is making available LLMs through some type
-            # of subscription or other proxies) do not support top_p,
-            # so only send it when it is explicitly configured
-            # differently from the default approach for LLMs
-            response = cast(
-                ChatCompletion,
-                client.chat.completions.create(
-                    **completions_kwargs,
-                ),
+            # send only the required chat completion fields; optional token,
+            # sampling, and thinking controls vary by model and provider.
+            # use server defaults rather than inferring support from a name.
+            response = client.chat.completions.create(
+                model=self._model_id,
+                messages=typed_messages,
+                timeout=REMOTE_HINT_TIMEOUT_MS / 1000,
             )
             # extract the content from the response; for reasoning
             # models this may be empty and the actual answer may be
@@ -327,10 +306,8 @@ class RemoteHintEngine:
             msg = choice.message
             hint = (msg.content or EMPTY).strip()
             if not hint:
-                # note: with enable_thinking=False the model should
-                # produce content directly; however, some servers
-                # may still put the answer in reasoning_content,
-                # so fall back to that, although this is limited
+                # some servers put the answer in reasoning_content,
+                # so preserve this fallback when content is empty.
                 rc = getattr(msg, REASONING_CONTENT_KEY, None)
                 if rc:
                     hint = rc.strip()
