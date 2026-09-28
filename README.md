@@ -146,7 +146,11 @@ The following options control how GatorGrade runs:
 - `--auto-hint-url`: URL of an OpenAI-compatible API server for remote hint
   generation. When provided, the remote model is used instead of the local model.
   Falls back to the default local model on any remote server errors. This option
-  requires `--auto-hint`.
+  requires `--auto-hint`. Requests use the standard Chat Completions `model`
+  and `messages` fields without provider-specific extensions. Sampling,
+  thinking, and output-token limits use server defaults; GatorGrade does not
+  impose a remote output-token cap. Configure server-side limits as needed
+  to control latency and cost.
 - `--auto-hint-key-env`, `-k`: Name of the environment variable containing the
   remote API key. Defaults to `AUTO_HINT_KEY_ENV`. This option requires
   `--auto-hint-url`. See
