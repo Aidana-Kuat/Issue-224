@@ -15,9 +15,9 @@ An API key is a secret code that lets GatorGrade authenticate with OpenAI.
 Keep your key private. Do not put it in your assignment files or on GitHub.
 API use can cost money; ask your instructor about access before paying.
 
-For more help, see the [official OpenAI quickstart][quickstart].
+For more help, see the [official OpenAI quick start][quick-start].
 
 [platform]: https://platform.openai.com/
 [keys]: https://platform.openai.com/api-keys
 [setup]: ../README.md#persistent-remote-api-key
-[quickstart]: https://platform.openai.com/docs/quickstart
+[quick-start]: https://platform.openai.com/docs/quickstart
