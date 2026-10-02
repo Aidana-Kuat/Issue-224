@@ -1,6 +1,6 @@
 # How to use an OpenAI-compatible API
 
-GatorGrade can use OpenAI and other providers that offer OpenAI-compatible APIs, such as DeepSeek, Gemini, Grok and others.
+GatorGrade can use OpenAI and other providers that offer OpenAI-compatible APIs, such as DeepSeek, Gemini, Grok, and others.
 
 To use an OpenAI-compatible provider, you need:
 
@@ -53,4 +53,4 @@ uvx --from 'gatorgrade[auto-hint]' gatorgrade \
 
 The same options can be used with other OpenAI-compatible providers by changing the API URL, API key, and model name.
 
-[setup]: ../README.md#openai-remote-api-key
+[setup]: ../README.md#persistent-remote-api-key
