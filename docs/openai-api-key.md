@@ -1,6 +1,6 @@
 # How to get an OpenAI API key
 
-An API key is a secret code that lets GatorGrade access OpenAI for you.
+An API key is a secret code that lets GatorGrade authenticate with OpenAI.
 
 1. Sign in or create an account at [OpenAI Platform][platform].
 2. Open the [API keys page][keys]. If you use a class project, select the

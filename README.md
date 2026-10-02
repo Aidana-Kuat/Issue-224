@@ -204,7 +204,7 @@ The following options control how GatorGrade runs:
 
 ### Persistent Remote API Key
 
-New to API keys? Follow [How to get an OpenAI API key](docs/openai-api-key.md).
+For more help, see the [official OpenAI quickstart][quickstart].
 
 For an authenticated remote auto-hint server, store the API key persistently in
 `AUTO_HINT_KEY_ENV`. This keeps the key out of the command line and makes it
